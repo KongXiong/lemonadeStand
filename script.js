@@ -141,6 +141,7 @@ function main(){
 	var weatherId;
 	var cupsPer;
 	var day;
+	var dayId;
 	var salesByWeather= {
 		Hot:120,
 		Warm:90,
@@ -198,7 +199,10 @@ function main(){
 	};
 
 	var cupsId;
+	var cashMade;
 
+
+	cashMade=0;
 	cupsId=document.getElementById("cups");
 	storedCups = [];
 	remainingCash=20.00
@@ -223,6 +227,7 @@ function main(){
 	sellButton=document.getElementById("sellButton");
 	weatherId=document.getElementById("weather");
 	costPer=document.getElementById("costPer").value;
+	dayId=document.getElementById("day");
 	document.getElementById("makeButton").disabled = false;
 
 	weatherId.innerHTML=weather;
@@ -230,7 +235,7 @@ function main(){
 	buyButton.onclick=function (){
 		lemonInput=getItem("lemonField");
 		sugarInput=getItem("sugarField");
-		iceInput=getItem("iceField");
+		iceInput=getItem("iceField") * 100;
 		thisRoundsIceCost=calcPrice(iceCost, iceInput);
 		thisRoundsSugarCost=calcPrice(sugarCost, sugarInput);
 		thisRoundsLemonCost=calcPrice(lemonCost, lemonInput);
@@ -318,6 +323,7 @@ function main(){
 		var itr;
 		var multiplier;
 		var cupsSold;
+		var cashMadeThisRound;
 		cupsSold=cups;
 		toggleButton();
 		multiplier = 1;
@@ -352,23 +358,34 @@ function main(){
 					cupsSold=0;
 					alert("Yuck!");
 				};
-
 				multiplier *= storedCups[itr].worth;
-
 			}
 			cupsSold = multiplier;
 			if (cupsSold > cups) {
 				cupsSold=cups;
 			}
 			console.log("you sold " + cupsSold);
-			remainingCash= (Number(remainingCash)+(Number(cupsSold) * Number(costPer))).toFixed(2);
-			console.log("you made " + ((Number(cupsSold) * Number(costPer))));
+			cashMadeThisRound=Number(cupsSold) * Number(costPer);
+			remainingCash= (Number(remainingCash)+cashMadeThisRound).toFixed(2);
+			console.log("you made " + (cashMadeThisRound));
+			cashMade+=cashMadeThisRound;
 			cups=0;
 			day++;
+			displayCurrentItems(dayId, day);
 			displayCurrentItems(cupsId, cups);
+			
+			if (day === 8){
+				alert("You played for 7 days.  You made " + cashMade);
+				window.location.reload();
+			}
 			displayRemainingCash(remainingCashId, remainingCash);
 			weather=makeWeather();
 			weatherId.innerHTML=weather;
+			for (var i = 0; i<storedCups.length; i++){
+				storedCups.pop();
+			}
+			console.log(storedCups);
+
 		}
 	}
 
